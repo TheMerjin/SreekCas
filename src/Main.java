@@ -35,7 +35,7 @@ public class Main {
     
 
          
-        Expr sumExpr = new Add((new Var("x")), new Mul(new Var("y"), new Var("x")));
+        Expr sumExpr = new Add(new Mul( new Const(10), new Var("x")), new Mul(new Const(3), new Var("x")));
 
     System.out.println(expr);           // prints: (x + 5)
     System.out.println(expr.expand()); // prints: (x + 5)
