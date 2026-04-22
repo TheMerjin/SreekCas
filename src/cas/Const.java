@@ -9,6 +9,16 @@ public class Const extends Expr {
     public Const(double value) {
         this.value = value;
     }
+    @Override
+    public Expr expand() {
+        return this; // constants are already "expanded"
+    }
+    @Override
+    public Expr simplify() {
+        return this; // constants are already "expanded"
+    }
+
+
 
     public double eval(Map<String, Double> env) {
         return value;
