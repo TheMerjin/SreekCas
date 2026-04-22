@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         
 
-        Expr sumExpr = new Mul(new Mul(new Const(3), new Const(3)), new Mul(new Const(2), new Var("y"))); // (x+ y) + (x + y) // this is 3y*2y = 6Y^2
+        Expr sumExpr = new Mul(new Mul(new Var("x"), new Const(3)), new Mul(new Var("x"), new Const(3))); // (x+ y) + (x + y) // this is 3y*2y = 6Y^2
 
    
     // let's test whether it will prpery handle multiple multiplication now : )

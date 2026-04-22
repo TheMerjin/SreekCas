@@ -40,7 +40,26 @@ public class Mul extends Expr {
         }
 
         if (leftS instanceof Mul mul1 && rightS instanceof Mul mul2) {
-                return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul (mul1.right, mul2.right).simplify()).simplify();
+            return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul(mul1.right, mul2.right).simplify())
+                    .simplify();
+        }
+            
+        if (leftS instanceof Const c1 && rightS instanceof Mul mul3) {
+            return new Mul(new Mul(c1,  mul3.left).simplify(), mul3.right)
+                    .simplify();
+            
+
+
+        }
+        if (rightS instanceof Const c2 && leftS instanceof Mul mul4) {
+            return new Mul(new Mul(c2, mul4.left).simplify(), mul4.right)
+                    .simplify();
+
+        }
+        
+
+        if (leftS instanceof Mul mul5 && rightS instanceof Mul mul6) {
+                return new Mul(new Mul(mul5.left, mul6.left).simplify(), new Mul(mul5.right, mul6.right).simplify()).simplify();
             }
         
 
