@@ -40,7 +40,7 @@ public class Mul extends Expr {
         }
 
         if (leftS instanceof Mul mul1 && rightS instanceof Mul mul2) {
-                return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul (mul1.right, mul2.right).simplify());
+                return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul (mul1.right, mul2.right).simplify()).simplify();
             }
         
 
