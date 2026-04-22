@@ -35,9 +35,15 @@ public class Mul extends Expr {
             return new Const(0);
 
         if (leftS instanceof Var && rightS instanceof Const rc) {
-    // Swap so constant is on the left
+            // Swap so constant is on the left
             return new Mul(rc, leftS);
         }
+
+        if (leftS instanceof Mul mul1 && rightS instanceof Mul mul2) {
+                return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul (mul1.right, mul2.right).simplify());
+            }
+        
+
 
         // 4. Keep as Mul if can't simplify further
         return new Mul(leftS, rightS);
