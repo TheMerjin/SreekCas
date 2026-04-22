@@ -61,8 +61,7 @@ public class Add extends Expr { // Add should extend Expr
             /*
             TODO: Additional simplifications to implement:
             
-            1. Mul + Mul with the same variable
-            - Example: 2*x + 3*x -> 5*x
+           
             
             
             
@@ -96,7 +95,7 @@ public class Add extends Expr { // Add should extend Expr
                 }
             }
 
-            
+
 
             // fall back if no simplification can be seen 
             // :- )
