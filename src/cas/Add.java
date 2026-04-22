@@ -39,6 +39,9 @@ public class Add extends Expr { // Add should extend Expr
                 lv.name.equals(rv.name)) {
             return new Mul(new Const(2), lv); // x + x → 2*x
         }
+        if (simplifiedLeft instanceof Const c1 && simplifiedRight instanceof Var v1) {
+                return new Add(simplifiedRight, simplifiedLeft);
+            }
 
         // now we need tackle some complicated cases 
 
@@ -95,7 +98,14 @@ public class Add extends Expr { // Add should extend Expr
                 }
             }
 
+            //Nested Adds 
+            if (simplifiedLeft instanceof Add add1 && simplifiedRight instanceof Add add2) {
+                return new Add(new Add(add1.left, add2.left).simplify(), new Add (add1.right, add2.right).simplify());
+            }
 
+
+
+            
 
             // fall back if no simplification can be seen 
             // :- )
