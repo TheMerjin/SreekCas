@@ -70,8 +70,7 @@ public class Add extends Expr { // Add should extend Expr
             
             
             
-            2. Nested Adds (flattening)
-            - Example: (x + 5) + (x + 10) -> x + x + 15
+           
             
             3. Combining constants in Add nodes with Mul
             - Example: x + (2 + 3) -> x + 5
