@@ -27,5 +27,9 @@ public class Const extends Expr {
     public String toString() {
         return Double.toString(value);
     }
+
+    public Expr diff(Var var) {
+        return new Const(0);
+    };
 }
 

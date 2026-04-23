@@ -45,12 +45,11 @@ public class Mul extends Expr {
         }
             
         if (leftS instanceof Const c1 && rightS instanceof Mul mul3) {
-            return new Mul(new Mul(c1,  mul3.left).simplify(), mul3.right)
+            return new Mul(new Mul(c1, mul3.left).simplify(), mul3.right)
                     .simplify();
-            
-
 
         }
+        
         if (rightS instanceof Const c2 && leftS instanceof Mul mul4) {
             return new Mul(new Mul(c2, mul4.left).simplify(), mul4.right)
                     .simplify();
@@ -59,8 +58,40 @@ public class Mul extends Expr {
         
 
         if (leftS instanceof Mul mul5 && rightS instanceof Mul mul6) {
-                return new Mul(new Mul(mul5.left, mul6.left).simplify(), new Mul(mul5.right, mul6.right).simplify()).simplify();
+            return new Mul(new Mul(mul5.left, mul6.left).simplify(), new Mul(mul5.right, mul6.right).simplify())
+                    .simplify();
+        }
+        if (leftS instanceof Var v1 && rightS instanceof Var v2) {
+            if (v1.name.equals(v2.name)) {
+                return new Pow(v1, new Const(2));
             }
+        }
+        if (leftS instanceof Pow p && rightS instanceof Var v) {
+            if (p.left instanceof Var base && base.name.equals(v.name)
+                    && p.right instanceof Const exp) {
+
+                return new Pow(base, new Const(exp.value + 1));
+            }
+        }
+        if (leftS instanceof Var v && rightS instanceof Pow p) {
+            if (p.left instanceof Var base && base.name.equals(v.name)
+                    && p.right instanceof Const exp) {
+
+                return new Pow(base, new Const(exp.value + 1));
+            }
+        }
+        if (leftS instanceof Pow p1 && rightS instanceof Pow p2) {
+    if (p1.left instanceof Var v1 && p2.left instanceof Var v2
+            && v1.name.equals(v2.name)
+            && p1.right instanceof Const e1
+            && p2.right instanceof Const e2) {
+
+        return new Pow(v1, new Const(e1.value + e2.value));
+    }
+}
+
+
+
         
 
 
@@ -69,6 +100,22 @@ public class Mul extends Expr {
     }
     @Override
     public Expr expand() {
+        Expr leftE = left.expand();
+    Expr rightE = right.expand();
+        if (rightE instanceof Add add) {
+        return new Add(
+            new Mul(leftE, add.left).expand(),
+            new Mul(leftE, add.right).expand()
+        );
+    }
+
+    // (a + b) * c → (a*c + b*c)
+    if (leftE instanceof Add add) {
+        return new Add(
+            new Mul(add.left, rightE).expand(),
+            new Mul(add.right, rightE).expand()
+        );
+    }
         // expand left and right
         return new Mul(left.expand(), right.expand());
     }
@@ -76,6 +123,10 @@ public class Mul extends Expr {
     @Override
     public double eval(Map<String, Double> env) {
         return left.eval(env) * right.eval(env);
+    }
+
+    public Expr diff(Var var) {
+        return new Add(new Mul(this.left, this.right.diff(var)), new Mul(this.left.diff(var), this.right));
     }
 
     @Override

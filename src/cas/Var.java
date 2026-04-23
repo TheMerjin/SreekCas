@@ -26,6 +26,13 @@ public class Var extends Expr {
     public Expr simplify() {
         return this; // variables stay as-is
     }
+
+    public Expr diff(Var var) {
+        if (var.name != name) {
+            return new Const(0);
+        }
+        return new Const(1);
+    }
     
 
     public String toString() {

@@ -12,5 +12,9 @@ public abstract class Expr {
     public abstract String toString();
 
     public abstract Expr expand();
+
     public abstract Expr simplify();
+
+    public abstract Expr diff(Var var);
+    
 }

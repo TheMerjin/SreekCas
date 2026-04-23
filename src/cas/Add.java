@@ -40,8 +40,8 @@ public class Add extends Expr { // Add should extend Expr
             return new Mul(new Const(2), lv); // x + x → 2*x
         }
         if (simplifiedLeft instanceof Const c1 && simplifiedRight instanceof Var v1) {
-                return new Add(simplifiedRight, simplifiedLeft);
-            }
+            return new Add(simplifiedRight, simplifiedLeft);
+        }
 
         // now we need tackle some complicated cases 
 
@@ -60,56 +60,56 @@ public class Add extends Expr { // Add should extend Expr
             }
         }
 
-            // implemented 2x *x and x*2x and y*x + x == (y+1 ) * x and TODO: implement these
-            /*
-            TODO: Additional simplifications to implement:
-            
-           
-            
-            
-            
-            
-            
-           
-            
-            3. Combining constants in Add nodes with Mul
-            - Example: x + (2 + 3) -> x + 5
-            
-            4. Ordering / normalization (optional)
-            - Ensure Var or Mul comes first, then constants for consistency
-            
-            5. General like-term combining helper
-            - Implement a helper to extract coefficient and variable
-            - Handles Var -> 1*Var, Mul(Const, Var) -> coefficient*Var
-            - Simplifies Var + Var, Var + Mul, Mul + Mul
-            
-            6. Handle more complex expressions
-            - Example: (x + y) + (x + 2*y)
-            - May require recursive simplification or expansion
-            */
-
-            //Mul with Mull eg. 2*x + 3*x => 5*x 
-
-            if (simplifiedLeft instanceof Mul lm1 && simplifiedRight instanceof Mul rm) {
-                if (lm1.right instanceof Var lv && rm.right instanceof Var rv && lv.name.equals(rv.name)
-                        && lm1.left instanceof Const lc1 && rm.left instanceof Const lc2) {
-                    return new Mul(new Const(lc1.value + lc2.value), lv);
-                }
-            }
-
-            //Nested Adds 
-            if (simplifiedLeft instanceof Add add1 && simplifiedRight instanceof Add add2) {
-                return new Add(new Add(add1.left, add2.left).simplify(), new Add (add1.right, add2.right).simplify());
-            }
-
-
-
-            
-
-            // fall back if no simplification can be seen 
-            // :- )
-            return new Add(simplifiedLeft, simplifiedRight);
+        // implemented 2x *x and x*2x and y*x + x == (y+1 ) * x and TODO: implement these
+        /*
+        TODO: Additional simplifications to implement:
         
+        
+        
+        
+        
+        
+        
+        
+        
+        3. Combining constants in Add nodes with Mul
+        - Example: x + (2 + 3) -> x + 5
+        
+        4. Ordering / normalization (optional)
+        - Ensure Var or Mul comes first, then constants for consistency
+        
+        5. General like-term combining helper
+        - Implement a helper to extract coefficient and variable
+        - Handles Var -> 1*Var, Mul(Const, Var) -> coefficient*Var
+        - Simplifies Var + Var, Var + Mul, Mul + Mul
+        
+        6. Handle more complex expressions
+        - Example: (x + y) + (x + 2*y)
+        - May require recursive simplification or expansion
+        */
+
+        //Mul with Mull eg. 2*x + 3*x => 5*x 
+
+        if (simplifiedLeft instanceof Mul lm1 && simplifiedRight instanceof Mul rm) {
+            if (lm1.right instanceof Var lv && rm.right instanceof Var rv && lv.name.equals(rv.name)
+                    && lm1.left instanceof Const lc1 && rm.left instanceof Const lc2) {
+                return new Mul(new Const(lc1.value + lc2.value), lv);
+            }
+        }
+
+        //Nested Adds 
+        if (simplifiedLeft instanceof Add add1 && simplifiedRight instanceof Add add2) {
+            return new Add(new Add(add1.left, add2.left).simplify(), new Add(add1.right, add2.right).simplify());
+        }
+
+        // fall back if no simplification can be seen 
+        // :- )
+        return new Add(simplifiedLeft, simplifiedRight);
+
+    }
+
+    public Expr diff(Var var) {
+        return new Add(left.diff(var), right.diff(var));
     }
 
     @Override
