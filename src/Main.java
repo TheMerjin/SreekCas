@@ -123,7 +123,7 @@ diffTest(new Add(
 // expected: cos(x) + 3x^2
 
 // 9. Function of function of function (deep nesting stress)
-/* 
+
 diffTest(new Func("cos",
     new Func("sin",
         new Func("exp",
@@ -131,7 +131,7 @@ diffTest(new Func("cos",
         )
     )
 ));
-*/
+
 // expected: giant chain rule expression
 
 // 10. Zero dependency inside function

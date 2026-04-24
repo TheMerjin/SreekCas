@@ -11,6 +11,23 @@ public class Pow extends Expr {
         this.left = left;
         this.right = right;
     }
+    @Override
+    public Expr integrate(Var var) {
+        Expr base = left;
+        Expr exponent = right;
+        if (base instanceof Var && ((Var) base).name.equals(var.name) && exponent instanceof Const) {
+            double n = ((Const) exponent).value;
+            if (n == -1) {
+                // ∫x^-1 dx = ln|x|
+                return new Func("ln", base);
+            } else {
+                // ∫x^n dx = (1/(n+1)) * x^(n+1)
+                return new Mul(new Pow(new Const((n + 1)), new Const(-1)), new Pow(base, new Const(n + 1)));
+            }
+        }
+        // fallback for complex bases or exponents
+        return new UnevaluatedIntegral(this, var);
+    }
 
     @Override
     public double eval(Map<String, Double> env) {
@@ -54,7 +71,7 @@ return new Pow(base, exp);
     }
     @Override
     public Expr diff(Var var) {
-        
+
         if (left instanceof Var v && right instanceof Const c) {
             if (var.name.equals(v.name)) {
                 return new Mul(
@@ -63,8 +80,12 @@ return new Pow(base, exp);
 
             }
         }
-        
+
         return new Const(0);
     }
+    @Override
+public boolean dependsOn(Var v) {
+    return left.dependsOn(v) || right.dependsOn(v);
+}
 }
 

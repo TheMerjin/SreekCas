@@ -10,6 +10,9 @@ public class Func extends Expr {
         this.name = name;
         this.arg = arg;
     }
+    public Expr integrate(Var var) {
+        return new UnevaluatedIntegral(this, var);
+    }
 
     @Override
     public double eval(Map<String, Double> env) {
@@ -43,26 +46,30 @@ public class Func extends Expr {
 
     @Override
     public Expr diff(Var var) {
-        // chain rule: f(g(x))' = f'(g(x)) * g'(x)
-        Expr inner = arg;
-        Expr innerDiff = arg.diff(var);
-        
+    
 
-        return switch (name) {
-            case "sin" -> new Mul(new Func("cos", inner), innerDiff);
-            case "cos" -> new Mul(new Const(-1),
-                            new Mul(new Func("sin", inner), innerDiff));
-            case "exp" -> new Mul(new Func("exp", inner), innerDiff);
-            case "log" -> new Mul(
-                            new Mul(new Const(1),
-                                    new Pow(inner, new Const(-1))),
-                            innerDiff);
-            default -> new Mul(new Func(name + "'", arg), innerDiff);
-        };
+    if (!arg.dependsOn(var)) {
+        return new Const(0);
     }
+
+    Expr innerDiff = arg.diff(var);
+
+    return switch (name) {
+        case "sin" -> new Mul(new Func("cos", arg), innerDiff);
+        case "cos" -> new Mul(new Const(-1),
+                new Mul(new Func("sin", arg), innerDiff));
+        case "exp" -> new Mul(new Func("exp", arg), innerDiff);
+        case "log" -> new Mul(new Pow(arg, new Const(-1)), innerDiff);
+        default -> new Mul(new Func(name + "'", arg), innerDiff);
+    };
+}
 
     @Override
     public String toString() {
         return name + "(" + arg + ")";
     }
+    @Override
+public boolean dependsOn(Var v) {
+    return arg.dependsOn(v);
+}
 }

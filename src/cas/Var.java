@@ -26,6 +26,7 @@ public class Var extends Expr {
     public Expr simplify() {
         return this; // variables stay as-is
     }
+    
 
     public Expr diff(Var var) {
         if (var.name != name) {
@@ -33,6 +34,22 @@ public class Var extends Expr {
         }
         return new Const(1);
     }
+    @Override
+    public boolean dependsOn(Var v) {
+        return this.name.equals(v.name);
+    }
+
+    public Expr integrate(Var var) {
+        if (this.name.equals(var.name)) {
+            return new Mul (new Pow(this, new Const(2)), new Pow(new Const(2), new Const(-1)));
+            
+        } else {
+            return new Const(0);
+        }
+
+        
+    }
+
     
 
     public String toString() {

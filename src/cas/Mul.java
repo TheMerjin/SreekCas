@@ -11,8 +11,49 @@ public class Mul extends Expr {
         this.right = right;
     }
 
+    
+    @Override
+public Expr integrate(Var var) {
+    // Case 1: left is constant → factor out
+    if (left instanceof Const) {
+        return new Mul(left, right.integrate(var));
+    }
+
+    // Case 2: right is constant → factor out
+    if (right instanceof Const) {
+        return new Mul(right, left.integrate(var));
+    }
+
+    // Case 3: Try simple integration by parts heuristic
+    // u = algebraic (x^n or Var), dv = rest
+    Expr u = null;
+    Expr dv = null;
+
+    if (left.dependsOn(var) && !(left instanceof Const) && (left instanceof Pow || left instanceof Var)) {
+        u = left;
+        dv = right;
+    } else if (right.dependsOn(var) && !(right instanceof Const) && (right instanceof Pow || right instanceof Var)) {
+        u = right;
+        dv = left;
+    }
+
+    if (u != null && dv != null) {
+        // du = derivative of u
+        Expr du = u.diff(var);
+        // v = integral of dv
+        Expr v = dv.integrate(var);
+
+        // Apply integration by parts: u*v - ∫v*du
+        return new Add(new Mul(u, v), new Mul(new Const(-1), new Mul(v, du).integrate(var)));
+    }
+
+    // Case 4: fallback: cannot solve
+    return new UnevaluatedIntegral(this, var);
+}
+
     @Override
     public Expr simplify() {
+
         // Simplify children first
         Expr leftS = left.simplify();
         Expr rightS = right.simplify();
@@ -40,8 +81,7 @@ public class Mul extends Expr {
         }
 
         if (leftS instanceof Mul mul1 && rightS instanceof Mul mul2) {
-            return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul(mul1.right, mul2.right).simplify())
-                    .simplify();
+            return new Mul(new Mul(mul1.left, mul2.left).simplify(), new Mul(mul1.right, mul2.right).simplify());
         }
             
         if (leftS instanceof Const c1 && rightS instanceof Mul mul3) {
@@ -133,4 +173,8 @@ public class Mul extends Expr {
     public String toString() {
         return "(" + left + " * " + right + ")";
     }
+    @Override
+public boolean dependsOn(Var v) {
+    return left.dependsOn(v) || right.dependsOn(v);
+}
 }

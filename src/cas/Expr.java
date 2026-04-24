@@ -16,5 +16,9 @@ public abstract class Expr {
     public abstract Expr simplify();
 
     public abstract Expr diff(Var var);
+
+    public abstract boolean dependsOn(Var var);
+
+    public abstract Expr integrate(Var var); 
     
 }

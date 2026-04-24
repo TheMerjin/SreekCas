@@ -12,6 +12,12 @@ public class Add extends Expr { // Add should extend Expr
     }
 
     @Override
+    public Expr integrate(Var var) {
+        // Sum rule: ∫(f+g) dx = ∫f dx + ∫g dx
+        return new Add(left.integrate(var), right.integrate(var));
+    }
+
+    @Override
     public double eval(Map<String, Double> env) {
         return left.eval(env) + right.eval(env);
     }
@@ -24,6 +30,7 @@ public class Add extends Expr { // Add should extend Expr
 
     @Override
     public Expr simplify() {
+
         // expand left and right
         Expr simplifiedLeft = left.simplify();
         Expr simplifiedRight = right.simplify();
@@ -116,5 +123,9 @@ public class Add extends Expr { // Add should extend Expr
     public String toString() {
         return "(" + left + " + " + right + ")";
     }
+    @Override
+public boolean dependsOn(Var v) {
+    return left.dependsOn(v) || right.dependsOn(v);
+}
 
 }

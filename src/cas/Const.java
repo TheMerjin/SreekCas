@@ -27,9 +27,18 @@ public class Const extends Expr {
     public String toString() {
         return Double.toString(value);
     }
+    @Override
+public boolean dependsOn(Var v) {
+    return false;
+}
 
     public Expr diff(Var var) {
         return new Const(0);
     };
+
+    public Expr integrate(Var var) {
+        return new Mul(this, var);
+        
+    }
 }
 
